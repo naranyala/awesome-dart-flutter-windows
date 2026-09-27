@@ -112,32 +112,6 @@ Windows desktop is a first-class Flutter target: real Win32 windows, MSIX instal
 
 ---
 
-## Win32, COM & WinRT Interop
-
-The heart of "Windows-only" Dart — direct, type-safe access to the OS.
-
-| Package | Description |
-| --- | --- |
-| [win32](https://pub.dev/packages/win32) | Call common Win32 APIs and COM objects directly from Dart via FFI. The flagship package. |
-| [win32_gui](https://pub.dev/packages/win32_gui) | Object-oriented Win32 GUI helpers built on `win32` + `dart:ffi`. |
-| [win32_registry](https://pub.dev/packages/win32_registry) | Type-safe Windows Registry read/write. |
-| [win32_gamepad](https://pub.dev/packages/win32_gamepad) | Type-safe XInput gamepad access. |
-| [win32_runner](https://pub.dev/packages/win32_runner) | Run a Flutter Windows app from a pure-Dart Win32 entry point — no C++ compiler needed. |
-| [win32audio](https://pub.dev/packages/win32audio) | Enumerate audio devices, set the default device, and control master/per-app volume. |
-| [win32_clipboard](https://pub.dev/packages/win32_clipboard) | Modern, type-safe Windows Clipboard API with custom format support. |
-| [win32_suspend_process](https://pub.dev/packages/win32_suspend_process) | Suspend and resume processes from native Dart code. |
-| [winrt](https://pub.dev/packages/winrt) | Windows Runtime (WinRT) APIs from a single package — experimental. |
-| [com](https://pub.dev/packages/com) | Idiomatic Dart projection of the COM APIs (prototype). |
-| [windart](https://pub.dev/packages/windart) | Lightweight Win32 bindings for Dart via FFI. |
-| [winmd](https://pub.dev/packages/winmd) | Inspect and generate Windows Metadata (`.winmd`) files per the ECMA-335 standard. |
-| [dart_console](https://pub.dev/packages/dart_console) | Console color, cursor, and input control for Dart CLI tools. |
-| [file_saver](https://pub.dev/packages/file_saver) | Native save-file dialogs and file writing. |
-| [serial_port_win32](https://pub.dev/packages/serial_port_win32) | Serial port I/O over the Win32 API. |
-
-**Explore more:** [pub.dev packages compatible with Windows](https://pub.dev/packages?q=platform%3Awindows) · [search `win32`](https://pub.dev/packages?q=win32) · [search `ffi`](https://pub.dev/packages?q=ffi)
-
----
-
 ## File Dialogs, Shell & Taskbar
 
 | Package | Description |
@@ -233,6 +207,71 @@ The heart of "Windows-only" Dart — direct, type-safe access to the OS.
 | [webview_flutter_windows](https://pub.dev/packages/webview_flutter_windows) | The Windows implementation of `webview_flutter` (WebView2). |
 | [desktop_webview_window](https://pub.dev/packages/desktop_webview_window) | Open a webview as its own separate desktop window. |
 | [flutter_inappwebview](https://pub.dev/packages/flutter_inappwebview) | Inline and headless webviews with an in-app browser. |
+
+---
+
+## Templates, Samples & Showcase Apps
+
+**Templates & official samples**
+
+- [`windows.tmpl`](https://github.com/flutter/flutter/tree/master/packages/flutter_tools/templates/app/windows.tmpl) — The Windows runner template used by `flutter create`.
+- [`plugin/windows.tmpl`](https://github.com/flutter/flutter/tree/master/packages/flutter_tools/templates/plugin/windows.tmpl) — Windows plugin template.
+- [Flutter samples](https://github.com/flutter/samples) — Official sample catalog.
+- [desktop_photo_search](https://github.com/flutter/samples/tree/main/desktop_photo_search) — Desktop sample referenced by the official Windows docs.
+- [`dart:ffi` samples](https://github.com/dart-lang/samples/tree/main/ffi) — Official FFI examples.
+- [Flutter Gallery](https://github.com/flutter/gallery) — Includes desktop form factors.
+- [flutter/packages](https://github.com/flutter/packages) — Where the official platform-implementation packages live.
+
+**Showcase apps worth reading the source of**
+
+- [Harmonoid](https://github.com/harmonoid/harmonoid) — Windows-focused music player.
+- [Invoice Ninja Flutter client](https://github.com/invoiceninja/flutter-client) — Production-grade Flutter desktop app.
+- [Flokk](https://github.com/gskinnerTeam/Flokk) — Google Contacts desktop client from the Windows alpha announcement.
+- [win32 examples](https://github.com/halildurmus/win32) — Extensive Win32 usage examples.
+- [flutter-desktop-embedding](https://github.com/google/flutter-desktop-embedding) — Historical early desktop embedding project *(archived)*.
+
+**Browse:** [GitHub topic `flutter-windows`](https://github.com/topics/flutter-windows)
+
+---
+
+## Community
+
+- [Flutter Discord](https://discord.com/invite/N7Yshp4) — The `#desktop` and Windows channels are where desktop questions get answered.
+- [r/FlutterDev](https://www.reddit.com/r/FlutterDev/) — Active subreddit for desktop discussion.
+- [Stack Overflow — `flutter-desktop`](https://stackoverflow.com/questions/tagged/flutter-desktop) — 300+ targeted questions.
+- [Stack Overflow — `flutter`](https://stackoverflow.com/questions/tagged/flutter) — The main tag.
+- [Flutter GitHub issues — `platform-windows`](https://github.com/flutter/flutter/issues?q=is%3Aissue%20label%3Aplatform-windows) — 2,000+ open/closed Windows-specific issues.
+- [Flutter Forum](https://forum.itsallwidgets.com/) — The official forum.
+- [Flutter Community hub](https://flutter.dev/community) — Canonical index of all official channels.
+- [Meetup — Flutter](https://www.meetup.com/pro/flutter/) — Local groups, many desktop-active.
+
+> Note: `flutter/flutter` has no GitHub Discussions — Issues and Discord are the channels.
+
+---
+
+## Win32, COM & WinRT Interop
+
+The heart of "Windows-only" Dart — direct, type-safe access to the OS.
+
+| Package | Description |
+| --- | --- |
+| [win32](https://pub.dev/packages/win32) | Call common Win32 APIs and COM objects directly from Dart via FFI. The flagship package. |
+| [win32_gui](https://pub.dev/packages/win32_gui) | Object-oriented Win32 GUI helpers built on `win32` + `dart:ffi`. |
+| [win32_registry](https://pub.dev/packages/win32_registry) | Type-safe Windows Registry read/write. |
+| [win32_gamepad](https://pub.dev/packages/win32_gamepad) | Type-safe XInput gamepad access. |
+| [win32_runner](https://pub.dev/packages/win32_runner) | Run a Flutter Windows app from a pure-Dart Win32 entry point — no C++ compiler needed. |
+| [win32audio](https://pub.dev/packages/win32audio) | Enumerate audio devices, set the default device, and control master/per-app volume. |
+| [win32_clipboard](https://pub.dev/packages/win32_clipboard) | Modern, type-safe Windows Clipboard API with custom format support. |
+| [win32_suspend_process](https://pub.dev/packages/win32_suspend_process) | Suspend and resume processes from native Dart code. |
+| [winrt](https://pub.dev/packages/winrt) | Windows Runtime (WinRT) APIs from a single package — experimental. |
+| [com](https://pub.dev/packages/com) | Idiomatic Dart projection of the COM APIs (prototype). |
+| [windart](https://pub.dev/packages/windart) | Lightweight Win32 bindings for Dart via FFI. |
+| [winmd](https://pub.dev/packages/winmd) | Inspect and generate Windows Metadata (`.winmd`) files per the ECMA-335 standard. |
+| [dart_console](https://pub.dev/packages/dart_console) | Console color, cursor, and input control for Dart CLI tools. |
+| [file_saver](https://pub.dev/packages/file_saver) | Native save-file dialogs and file writing. |
+| [serial_port_win32](https://pub.dev/packages/serial_port_win32) | Serial port I/O over the Win32 API. |
+
+**Explore more:** [pub.dev packages compatible with Windows](https://pub.dev/packages?q=platform%3Awindows) · [search `win32`](https://pub.dev/packages?q=win32) · [search `ffi`](https://pub.dev/packages?q=ffi)
 
 ---
 
@@ -462,30 +501,6 @@ Go read the source of truth when a package doesn't cover what you need.
 
 ---
 
-## Templates, Samples & Showcase Apps
-
-**Templates & official samples**
-
-- [`windows.tmpl`](https://github.com/flutter/flutter/tree/master/packages/flutter_tools/templates/app/windows.tmpl) — The Windows runner template used by `flutter create`.
-- [`plugin/windows.tmpl`](https://github.com/flutter/flutter/tree/master/packages/flutter_tools/templates/plugin/windows.tmpl) — Windows plugin template.
-- [Flutter samples](https://github.com/flutter/samples) — Official sample catalog.
-- [desktop_photo_search](https://github.com/flutter/samples/tree/main/desktop_photo_search) — Desktop sample referenced by the official Windows docs.
-- [`dart:ffi` samples](https://github.com/dart-lang/samples/tree/main/ffi) — Official FFI examples.
-- [Flutter Gallery](https://github.com/flutter/gallery) — Includes desktop form factors.
-- [flutter/packages](https://github.com/flutter/packages) — Where the official platform-implementation packages live.
-
-**Showcase apps worth reading the source of**
-
-- [Harmonoid](https://github.com/harmonoid/harmonoid) — Windows-focused music player.
-- [Invoice Ninja Flutter client](https://github.com/invoiceninja/flutter-client) — Production-grade Flutter desktop app.
-- [Flokk](https://github.com/gskinnerTeam/Flokk) — Google Contacts desktop client from the Windows alpha announcement.
-- [win32 examples](https://github.com/halildurmus/win32) — Extensive Win32 usage examples.
-- [flutter-desktop-embedding](https://github.com/google/flutter-desktop-embedding) — Historical early desktop embedding project *(archived)*.
-
-**Browse:** [GitHub topic `flutter-windows`](https://github.com/topics/flutter-windows)
-
----
-
 ## Native Build Toolchain (CMake, MSVC, MinGW)
 
 To produce the DLLs and EXEs that FFI calls into.
@@ -573,21 +588,6 @@ Turn Dart scripts into real Windows binaries — great for the tools that suppor
 - **Validate your setup:** `flutter doctor -v` and `flutter devices`.
 - **Icon/resources:** `windows\runner\resources`.
 - **Versioning:** `--build-name` / `--build-number` when building for release.
-
----
-
-## Community
-
-- [Flutter Discord](https://discord.com/invite/N7Yshp4) — The `#desktop` and Windows channels are where desktop questions get answered.
-- [r/FlutterDev](https://www.reddit.com/r/FlutterDev/) — Active subreddit for desktop discussion.
-- [Stack Overflow — `flutter-desktop`](https://stackoverflow.com/questions/tagged/flutter-desktop) — 300+ targeted questions.
-- [Stack Overflow — `flutter`](https://stackoverflow.com/questions/tagged/flutter) — The main tag.
-- [Flutter GitHub issues — `platform-windows`](https://github.com/flutter/flutter/issues?q=is%3Aissue%20label%3Aplatform-windows) — 2,000+ open/closed Windows-specific issues.
-- [Flutter Forum](https://forum.itsallwidgets.com/) — The official forum.
-- [Flutter Community hub](https://flutter.dev/community) — Canonical index of all official channels.
-- [Meetup — Flutter](https://www.meetup.com/pro/flutter/) — Local groups, many desktop-active.
-
-> Note: `flutter/flutter` has no GitHub Discussions — Issues and Discord are the channels.
 
 ---
 
