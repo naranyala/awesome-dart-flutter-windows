@@ -1,15 +1,16 @@
 # Awesome Dart & Flutter for Windows [![Awesome](https://raw.githubusercontent.com/sindresorhus/awesome/main/media/badge.svg)](https://awesome.re)
 
-> A curated catalog of **Windows-focused** Dart & Flutter resources — packages, tooling, templates, docs, and community for building native Windows desktop apps.
+> A curated catalog of **Windows-focused** Dart & Flutter resources — packages, tooling, templates, docs, scripts, and community for building native Windows desktop apps.
 
-Windows desktop is a first-class Flutter target: real Win32 windows, MSIX installers, Fluent UI, WebView2, system tray, registry access, and full `dart:ffi` access to the OS. This list collects the good stuff for that specific niche.
+Windows desktop is a first-class Flutter target: real Win32 windows, MSIX installers, Fluent UI, WebView2, system tray, registry access, and full `dart:ffi` access to the OS. This list collects the good stuff for that specific niche — down to the raw Win32 bindings, FFI codegen, native build toolchains, and system-level scripting.
 
 **Contents**
+
+**Getting started**
 
 - [Official Documentation](#official-documentation)
 - [Announcements & Deep Dives](#announcements--deep-dives)
 - [Window Management & Chrome](#window-management--chrome)
-- [Win32, COM & WinRT Interop](#win32-com--winrt-interop)
 - [File Dialogs, Shell & Taskbar](#file-dialogs-shell--taskbar)
 - [System Tray & Notifications](#system-tray--notifications)
 - [Autostart, Hotkeys & Auto-Update](#autostart-hotkeys--auto-update)
@@ -17,11 +18,40 @@ Windows desktop is a first-class Flutter target: real Win32 windows, MSIX instal
 - [System, Hardware & Device Info](#system-hardware--device-info)
 - [Windows UI (Fluent)](#windows-ui-fluent)
 - [WebView2](#webview2)
-- [Media, Printing & Input](#media-printing--input)
 - [Templates, Samples & Showcase Apps](#templates-samples--showcase-apps)
-- [Tooling & Build](#tooling--build)
 - [Community](#community)
+
+**Low level: the raw OS surface**
+
+- [Win32, COM & WinRT Interop](#win32-com--winrt-interop)
+- [FFI: Calling Native Code](#ffi-calling-native-code)
+- [FFI Codegen & Binding Generators](#ffi-codegen--binding-generators)
+- [Native Assets & Build Hooks](#native-assets--build-hooks)
+- [Embedding Dart in Native Apps](#embedding-dart-in-native-apps)
+- [Process, Memory & Modules](#process-memory--modules)
+- [Raw Input: Hooks & Low-Level Devices](#raw-input-hooks--low-level-devices)
+- [Graphics: DirectX, OpenGL, Vulkan & Capture](#graphics-directx-opengl-vulkan--capture)
+- [Audio & Media Low Level](#audio--media-low-level)
+- [IPC, Pipes & Shell Integration](#ipc-pipes--shell-integration)
+- [System APIs: WMI, Registry, Services & Tasks](#system-apis-wmi-registry-services--tasks)
+- [Clipboard, Storage & Cryptography](#clipboard-storage--cryptography)
+- [Networking & HTTP](#networking--http)
+- [Scripting from Dart](#scripting-from-dart)
+- [Win32 API Reference (Microsoft)](#win32-api-reference-microsoft)
+
+**Toolchain**
+
+- [Native Build Toolchain (CMake, MSVC, MinGW)](#native-build-toolchain-cmake-msvc-mingw)
+- [Dart CLI & Standalone Executables](#dart-cli--standalone-executables)
+- [Testing & Debugging on Windows](#testing--debugging-on-windows)
+- [Tooling & Build](#tooling--build)
+
+**Ecosystem**
+
 - [Related Windows Platform Resources](#related-windows-platform-resources)
+- [Contributing](#contributing)
+
+> ⚠️ **A note on `win32*` packages.** Several packages below are community-maintained and young (v0.x). Always check the version, likes, and Windows platform badge on pub.dev before depending on them in production.
 
 ---
 
@@ -84,7 +114,7 @@ Windows desktop is a first-class Flutter target: real Win32 windows, MSIX instal
 
 ## Win32, COM & WinRT Interop
 
-The heart of "Windows-only" Dart.
+The heart of "Windows-only" Dart — direct, type-safe access to the OS.
 
 | Package | Description |
 | --- | --- |
@@ -92,12 +122,19 @@ The heart of "Windows-only" Dart.
 | [win32_gui](https://pub.dev/packages/win32_gui) | Object-oriented Win32 GUI helpers built on `win32` + `dart:ffi`. |
 | [win32_registry](https://pub.dev/packages/win32_registry) | Type-safe Windows Registry read/write. |
 | [win32_gamepad](https://pub.dev/packages/win32_gamepad) | Type-safe XInput gamepad access. |
+| [win32_runner](https://pub.dev/packages/win32_runner) | Run a Flutter Windows app from a pure-Dart Win32 entry point — no C++ compiler needed. |
+| [win32audio](https://pub.dev/packages/win32audio) | Enumerate audio devices, set the default device, and control master/per-app volume. |
+| [win32_clipboard](https://pub.dev/packages/win32_clipboard) | Modern, type-safe Windows Clipboard API with custom format support. |
+| [win32_suspend_process](https://pub.dev/packages/win32_suspend_process) | Suspend and resume processes from native Dart code. |
 | [winrt](https://pub.dev/packages/winrt) | Windows Runtime (WinRT) APIs from a single package — experimental. |
-| [serial_port_win32](https://pub.dev/packages/serial_port_win32) | Serial port I/O over the Win32 API. |
+| [com](https://pub.dev/packages/com) | Idiomatic Dart projection of the COM APIs (prototype). |
+| [windart](https://pub.dev/packages/windart) | Lightweight Win32 bindings for Dart via FFI. |
+| [winmd](https://pub.dev/packages/winmd) | Inspect and generate Windows Metadata (`.winmd`) files per the ECMA-335 standard. |
 | [dart_console](https://pub.dev/packages/dart_console) | Console color, cursor, and input control for Dart CLI tools. |
 | [file_saver](https://pub.dev/packages/file_saver) | Native save-file dialogs and file writing. |
+| [serial_port_win32](https://pub.dev/packages/serial_port_win32) | Serial port I/O over the Win32 API. |
 
-**Explore more:** [pub.dev packages compatible with Windows](https://pub.dev/packages?q=platform%3Awindows)
+**Explore more:** [pub.dev packages compatible with Windows](https://pub.dev/packages?q=platform%3Awindows) · [search `win32`](https://pub.dev/packages?q=win32) · [search `ffi`](https://pub.dev/packages?q=ffi)
 
 ---
 
@@ -199,6 +236,232 @@ The heart of "Windows-only" Dart.
 
 ---
 
+## FFI: Calling Native Code
+
+`dart:ffi` is how you get below Flutter and talk to Windows directly.
+
+**Official docs**
+
+- [C interop with `dart:ffi`](https://dart.dev/interop/c-interop) — The main guide.
+- [`dart:ffi` API reference](https://api.dart.dev/dart-ffi/dart-ffi-library.html) — `DynamicLibrary`, `NativeFunction`, `Pointer`, `Struct`.
+- [Bind native code in Flutter](https://docs.flutter.dev/platform-integration/bind-native-code) — Flutter-specific FFI guidance.
+- [Build hooks](https://dart.dev/tools/hooks) — Compile and bundle native code as part of your package build.
+
+| Package | Description |
+| --- | --- |
+| [ffi](https://pub.dev/packages/ffi) | Core helpers: `Utf8`, `calloc`, `malloc`, `structOf`, size calculations. |
+| [ffigen](https://pub.dev/packages/ffigen) | Generate Dart FFI bindings directly from C headers. |
+| [jnigen](https://pub.dev/packages/jnigen) | Generate bindings from JNI/native headers for Java and Dart interop. |
+| [sqlite3](https://pub.dev/packages/sqlite3) | FFI bindings to SQLite — the canonical "bundle a C library" example. |
+| [opengl](https://pub.dev/packages/opengl) | OpenGL 4.6 FFI bindings for Dart (Linux, macOS, Windows). |
+| [vulkan](https://pub.dev/packages/vulkan) | Vulkan 1.3 FFI bindings for Dart (Linux, Windows). |
+| [sdl2](https://pub.dev/packages/sdl2) | SDL 2 bindings for Dart via FFI — windowing, input, audio, GPU. |
+| [quickjs](https://pub.dev/packages/quickjs) | Embed the QuickJS JavaScript engine in Dart via native assets. |
+| [dart_odbc](https://pub.dev/packages/dart_odbc) | ODBC database driver via FFI. |
+| [stdc](https://pub.dev/packages/stdlibc) *(pkg `stdlibc`)* | Libc-style bindings for Dart via FFI. |
+
+---
+
+## FFI Codegen & Binding Generators
+
+Write the bindings by hand, or generate them.
+
+| Tool | Description |
+| --- | --- |
+| [ffigen](https://pub.dev/packages/ffigen) | The standard generator: parse C headers → Dart FFI bindings. |
+| [dllimport_gen](https://pub.dev/packages/dllimport_gen) | Generate Dart code from the Windows API docs, emulating C#'s `[DllImport]` notation. |
+| [winmd](https://pub.dev/packages/winmd) | Read/generate Windows Metadata (`.winmd`) — the source for WinRT projections. |
+| [win32](https://pub.dev/packages/win32) | Ships pre-generated bindings, so you rarely need to run a generator yourself. |
+| [jnigen](https://pub.dev/packages/jnigen) | Bindings generator for JNI and native interop. |
+| [dart-lang/native](https://github.com/dart-lang/native) | Dart team's repo for native interop experiments and design. |
+
+---
+
+## Native Assets & Build Hooks
+
+The modern way to compile C/C++/Rust into a Dart package — no CMake wrangling required.
+
+- [Build hooks (official)](https://dart.dev/tools/hooks) — Declare and build native assets from `hook/build.dart`.
+
+| Package | Description |
+| --- | --- |
+| [hooks](https://pub.dev/packages/hooks) | The hook API for building native assets. |
+| [hooks_runner](https://pub.dev/packages/hooks_runner) | Runs the build hooks for a package. |
+| [native_toolchain_c](https://pub.dev/packages/native_toolchain_c) | Drive a C compiler from a build hook. |
+| [native_toolchain_cmake](https://pub.dev/packages/native_toolchain_cmake) | Drive CMake from a build hook. |
+| [native_toolchain_rust](https://pub.dev/packages/native_toolchain_rust) | Build Rust crates as native assets. |
+| [native_toolchain_ninja](https://pub.dev/packages/native_toolchain_ninja) | Ninja-based builds from a hook. |
+| [native_assets_builder](https://pub.dev/packages/native_assets_builder) | Helpers for composing native asset builds. |
+| [code_assets](https://pub.dev/packages/code_assets) | Code-generation assets (prebuilt binaries) for packages. |
+
+---
+
+## Embedding Dart in Native Apps
+
+The reverse direction — call Dart from C, C++, or a native host.
+
+- [dart-lang/native](https://github.com/dart-lang/native) — Tooling and design docs for native interop in both directions.
+- [dart:ffi API reference](https://api.dart.dev/dart-ffi/dart-ffi-library.html) — Includes the `Dart_` C API and the DL API surface.
+- [C interop guide](https://dart.dev/interop/c-interop) — Structs, callbacks, and calling conventions.
+- [`dart_api_dl.h`](https://github.com/dart-lang/sdk/blob/main/runtime/include/dart_api_dl.h) — The dynamic-loading C API header: `Dart_Initialize`, `Dart_LoadLibrary`, and friends.
+- [Flutter Windows — external Win32 windows](https://docs.flutter.dev/platform-integration/windows/extern_win) — Hosting Flutter inside an existing native window.
+
+---
+
+## Process, Memory & Modules
+
+| Package / Resource | Description |
+| --- | --- |
+| [win32_suspend_process](https://pub.dev/packages/win32_suspend_process) | Suspend/resume processes natively. |
+| [win32](https://pub.dev/packages/win32) | Process/thread creation, memory allocation, module loading, `GetLastError`. |
+| [System error codes](https://learn.microsoft.com/en-us/windows/win32/debug/system-error-codes) | The documented `HRESULT`/`GetLastError` table. |
+| [`GetLastError`](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror) | Read the last Win32 error code. |
+| [Process Monitor (Procmon)](https://learn.microsoft.com/en-us/sysinternals/downloads/procmon) | Sysinternals — watch every file/registry/process op an app performs. |
+| [Process Explorer](https://learn.microsoft.com/en-us/sysinternals/downloads/process-explorer) | Inspect loaded modules, threads, and handles. |
+
+---
+
+## Raw Input: Hooks & Low-Level Devices
+
+Global hooks (`SetWindowsHookEx`), raw input, HID, and gamepads.
+
+| Package | Description |
+| --- | --- |
+| [win32hooks](https://pub.dev/packages/win32hooks) | Track mouse buttons and window events on Windows. |
+| [uiohook_dart](https://pub.dev/packages/uiohook_dart) | Cross-platform desktop keyboard & mouse hooking (libuiohook). |
+| [uiohook_flutter](https://pub.dev/packages/uiohook_flutter) | Flutter bindings for global input hooks. |
+| [winhooker](https://pub.dev/packages/winhooker) | Low-level keyboard and mouse event stream. |
+| [winhooker_mouse](https://pub.dev/packages/winhooker_mouse) | Raw mouse events scoped to a window. |
+| [win32_gamepad](https://pub.dev/packages/win32_gamepad) | XInput gamepad access. |
+| [hid4flutter](https://pub.dev/packages/hid4flutter) | Raw HID device access from Flutter. |
+| [bluetooth_rfcomm](https://pub.dev/packages/bluetooth_rfcomm) | Bluetooth RFCOMM serial-style transport. |
+| [Subclassing controls](https://learn.microsoft.com/en-us/windows/win32/controls/subclassing-overview) | Intercept another window's input at the Win32 level. |
+| [Messages and message queues](https://learn.microsoft.com/en-us/windows/win32/winmsg/about-messages-and-message-queues) | The core of Win32 input handling. |
+| [AutoHotkey v2 — Hotkeys](https://www.autohotkey.com/docs/v2/Hotkeys.htm) | Great reference for global-hotkey behavior and edge cases. |
+
+---
+
+## Graphics: DirectX, OpenGL, Vulkan & Capture
+
+| Package | Description |
+| --- | --- |
+| [opengl](https://pub.dev/packages/opengl) | OpenGL 4.6 FFI bindings. |
+| [vulkan](https://pub.dev/packages/vulkan) | Vulkan 1.3 FFI bindings. |
+| [dxgi_dart](https://pub.dev/packages/dxgi_dart) | Very high-performance screen capture on Windows via low-level FFI (DXGI). |
+| [sdl2](https://pub.dev/packages/sdl2) | SDL 2 bindings — windowing, rendering, input, audio in one FFI surface. |
+| [windows_gpu_recovery](https://pub.dev/packages/windows_gpu_recovery) | Recover from `EGL_CONTEXT_LOST` / `DXGI_ERROR_DEVICE_REMOVED` after sleep or driver reset. |
+| [DWM functions](https://learn.microsoft.com/en-us/windows/win32/dwm/functions) | Desktop Window Manager — composition, opacity, and blur. |
+| [`dwmapi.dll` API index](https://learn.microsoft.com/en-us/windows/win32/api/dwmapi/) | The DWM entry points. |
+
+---
+
+## Audio & Media Low Level
+
+| Package | Description |
+| --- | --- |
+| [win32audio](https://pub.dev/packages/win32audio) | Audio device enumeration, default device, and volume control. |
+| [audio_flutter_windows](https://pub.dev/packages/audio_flutter_windows) | Windows audio backend for Flutter audio. |
+| [flutter_miniaudio](https://pub.dev/packages/flutter_miniaudio) | miniaudio backend for playback and capture. |
+| [miniav](https://pub.dev/packages/miniav) | Cross-platform audio/video capture and playback. |
+| [miniav_recorder](https://pub.dev/packages/miniav_recorder) | Record audio and video from Dart. |
+| [system_audio_visualizer](https://pub.dev/packages/system_audio_visualizer) | Visualize system audio output. |
+| [sdl2](https://pub.dev/packages/sdl2) | SDL audio subsystem if you want one FFI dep for input+audio. |
+
+---
+
+## IPC, Pipes & Shell Integration
+
+| Package / Resource | Description |
+| --- | --- |
+| [portable_pty](https://pub.dev/packages/portable_pty) | Cross-platform pseudo-terminal (PTY) for Dart — spawn shells on Windows via ConPTY. |
+| [pty2](https://pub.dev/packages/pty2) | Pseudo-terminal file descriptors for Dart and Flutter. |
+| [flutter_pty2](https://pub.dev/packages/flutter_pty2) | Maintained FFI PTY plugin for Flutter. |
+| [win32](https://pub.dev/packages/win32) | Named pipes, shared memory, mailslots, and `CreateProcess`. |
+| [ConPTY — creating a pseudoconsole](https://learn.microsoft.com/en-us/windows/console/creating-a-pseudoconsole-session) | How Windows fakes a terminal for a child process. |
+| [`CreatePseudoConsole`](https://learn.microsoft.com/en-us/windows/console/createpseudoconsole) | The ConPTY entry point. |
+| [Windows Terminal](https://learn.microsoft.com/en-us/windows/terminal/) | The modern host console. |
+| [`ShellExecuteExW`](https://learn.microsoft.com/en-us/windows/win32/api/shellapi/nf-shellapi-shellexecuteexw) | Launch files/URLs with the shell (elevation, "run as"). |
+
+---
+
+## System APIs: WMI, Registry, Services & Tasks
+
+| Package / Resource | Description |
+| --- | --- |
+| [wmi](https://pub.dev/packages/wmi) | Query Windows Management Instrumentation. |
+| [win32_registry](https://pub.dev/packages/win32_registry) | Type-safe Registry read/write. |
+| [registry](https://pub.dev/packages/registry) | Tiny service-locator for Dart/Flutter with no codegen. |
+| [event_tracing_windows](https://pub.dev/packages/event_tracing_windows) | Monitor process and filesystem activity in real time via ETW. |
+| [Task Scheduler reference](https://learn.microsoft.com/en-us/windows/win32/taskschd/task-scheduler-reference) | The COM API for scheduled tasks. |
+| [`schtasks` command](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/schtasks) | The CLI for scheduling tasks. |
+| [Services API (`winsvc.h`)](https://learn.microsoft.com/en-us/windows/win32/api/winsvc/) | Install and control Windows services. |
+| [System information](https://learn.microsoft.com/en-us/windows/win32/sysinfo/system-information) | `GetSystemInfo`, memory, and CPU details. |
+| [Event Tracing for Windows (ETW)](https://learn.microsoft.com/en-us/windows/win32/etw/event-tracing-portal) | The OS-wide tracing subsystem. |
+
+---
+
+## Clipboard, Storage & Cryptography
+
+| Package | Description |
+| --- | --- |
+| [win32_clipboard](https://pub.dev/packages/win32_clipboard) | Type-safe clipboard access, including custom formats. |
+| [windows_hello](https://pub.dev/packages/windows_hello) | Windows Hello biometrics/PIN and Credential Manager. |
+| [biometric_storage](https://pub.dev/packages/biometric_storage) | Encrypted storage, optionally biometric-locked. |
+| [win32](https://pub.dev/packages/win32) | DPAPI, CryptoAPI, and certificate-store functions via FFI. |
+
+---
+
+## Networking & HTTP
+
+| Package | Description |
+| --- | --- |
+| [win_http](https://pub.dev/packages/win_http) | `package:http` client over the native WinHTTP API — system proxy, Schannel TLS, auto decompression. |
+| [win32](https://pub.dev/packages/win32) | Winsock, `WinHttp`, and HTTP.sys functions. |
+| [TCPView](https://learn.microsoft.com/en-us/sysinternals/downloads/tcpview) | See every socket your app opens. |
+
+---
+
+## Scripting from Dart
+
+Drive the shell, PowerShell, and the Windows command set from Dart.
+
+**Dart-side**
+
+- [`Process.run`](https://api.dart.dev/dart-io/Process/run.html) — Run a program and capture stdout/stderr.
+- [`Process` class](https://api.dart.dev/dart-io/Process-class.html) — Start, kill, and read `exitCode`.
+- [`dart:io` reference](https://api.dart.dev/dart-io/) — Filesystem, sockets, and processes.
+- [fiber_shell](https://pub.dev/packages/fiber_shell) — Typed shell-command builder for desktop; pipes and chaining in Dart instead of shell strings.
+- [shell_executor](https://pub.dev/packages/shell_executor) — Run shell commands with output capture.
+
+**Shell-side**
+
+- [PowerShell docs](https://learn.microsoft.com/en-us/powershell/) · [install `pwsh`](https://learn.microsoft.com/en-us/powershell/scripting/install/install-powershell-on-windows?view=powershell-7.6) · [about_pwsh](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_pwsh?view=powershell-7.6)
+- [cmd command reference](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/cmd) · [all Windows commands A–Z](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/windows-commands)
+- [Console code pages](https://learn.microsoft.com/en-us/windows/console/console-code-pages) — The classic Windows encoding gotcha.
+- [Console application issues](https://learn.microsoft.com/en-us/windows/console/console-application-issues) — CRLF, encoding, and why your output looks wrong.
+- [Code-page identifiers](https://learn.microsoft.com/en-us/windows/win32/intl/code-page-identifiers) — CP936/GBK and friends.
+- [`exit` / errorlevel](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/exit) · [`chcp`](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/chcp) · [`robocopy`](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/robocopy) · [`reg`](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/reg)
+
+---
+
+## Win32 API Reference (Microsoft)
+
+Go read the source of truth when a package doesn't cover what you need.
+
+- [Win32 and COM — build desktop apps](https://learn.microsoft.com/en-us/windows/win32/) — The entry point.
+- [`WinMain` — the application entry point](https://learn.microsoft.com/en-us/windows/win32/learnwin32/winmain--the-application-entry-point) — How a Windows app actually starts.
+- [Window procedures](https://learn.microsoft.com/en-us/windows/win32/winmsg/about-window-procedures) — `WndProc`, the callback at the heart of every window.
+- [Messages and message queues](https://learn.microsoft.com/en-us/windows/win32/winmsg/about-messages-and-message-queues) — How input reaches your app.
+- [Working with strings (`WinMain`)](https://learn.microsoft.com/en-us/windows/win32/learnwin32/working-with-strings) — The `wWinMain` / Unicode story.
+- [Code Pages (Win32)](https://learn.microsoft.com/en-us/windows/win32/intl/code-pages) — Encoding reference.
+- [DWM reference](https://learn.microsoft.com/en-us/windows/win32/dwm/reference) — Desktop Window Manager.
+- [Services API](https://learn.microsoft.com/en-us/windows/win32/api/winsvc/) · [service functions](https://learn.microsoft.com/en-us/windows/win32/services/service-functions)
+- [System information](https://learn.microsoft.com/en-us/windows/win32/sysinfo/system-information)
+- [Task Scheduler reference](https://learn.microsoft.com/en-us/windows/win32/taskschd/task-scheduler-reference)
+- [ConPTY](https://learn.microsoft.com/en-us/windows/console/creating-a-pseudoconsole-session) · [pseudoconsoles overview](https://learn.microsoft.com/en-us/windows/console/pseudoconsoles)
+
+---
+
 ## Templates, Samples & Showcase Apps
 
 **Templates & official samples**
@@ -220,6 +483,83 @@ The heart of "Windows-only" Dart.
 - [flutter-desktop-embedding](https://github.com/google/flutter-desktop-embedding) — Historical early desktop embedding project *(archived)*.
 
 **Browse:** [GitHub topic `flutter-windows`](https://github.com/topics/flutter-windows)
+
+---
+
+## Native Build Toolchain (CMake, MSVC, MinGW)
+
+To produce the DLLs and EXEs that FFI calls into.
+
+- [Flutter Windows — building](https://docs.flutter.dev/platform-integration/windows/building) — How the Windows runner uses CMake.
+- [Flutter Windows — setup](https://docs.flutter.dev/platform-integration/windows/setup) — Install the C++ workload.
+
+**MSVC / Visual Studio**
+
+- [MSVC compiler options](https://learn.microsoft.com/en-us/cpp/build/reference/compiler-options?view=msvc-170) — `/LD`, `/MT`, optimization flags.
+- [MSVC linker options](https://learn.microsoft.com/en-us/cpp/build/reference/linker-options?view=msvc-170) — Export a DLL from a `.def` or `__declspec(dllexport)`.
+- [`cl` command-line syntax](https://learn.microsoft.com/en-us/cpp/build/reference/compiler-command-line-syntax?view=msvc-170)
+- [Build from the command line](https://learn.microsoft.com/en-us/cpp/build/building-on-the-command-line?view=msvc-170) — `vcvarsall.bat` and the Developer Prompt.
+- [AddressSanitizer for MSVC](https://learn.microsoft.com/en-us/cpp/sanitizers/asan?view=msvc-170) — `/fsanitize=address` to catch memory bugs in your native code.
+- [`/fsanitize` flag](https://learn.microsoft.com/en-us/cpp/build/reference/fsanitize?view=msvc-170)
+
+**CMake & alternatives**
+
+- [CMake `find_package`](https://cmake.org/cmake/help/latest/command/find_package.html) · [CMake packages](https://cmake.org/cmake/help/latest/manual/cmake-packages.7.html) · [`cmake(1)`](https://cmake.org/cmake/help/latest/manual/cmake.1.html)
+- [Ninja](https://ninja-build.org/) · [Ninja manual](https://ninja-build.org/manual.html) — The fast build tool Flutter's Windows runner uses.
+- [MSYS2](https://www.msys2.org/) · [MSYS2 environments](https://www.msys2.org/docs/environments/) — UCRT64, CLANG64, etc.
+- [MinGW-w64](https://www.mingw-w64.org/) — GCC-based toolchain for Windows.
+- [Clang](https://clang.llvm.org/) · [Clang getting started](https://clang.llvm.org/get_started.html)
+
+**Windows SDK & resources**
+
+- [Windows SDK downloads](https://learn.microsoft.com/en-us/windows/apps/windows-sdk/downloads) — Headers, libs, and `rc.exe`.
+- [Resource compiler (`rc.exe`)](https://learn.microsoft.com/en-us/windows/win32/menurc/resource-compiler) — Embed icons, version info, and manifests into your DLL/EXE.
+- [About resource files](https://learn.microsoft.com/en-us/windows/win32/menurc/about-resource-files) · [`rc` command line](https://learn.microsoft.com/en-us/windows/win32/menurc/using-rc-the-rc-command-line-)
+- [VC++ deployment examples](https://learn.microsoft.com/en-us/cpp/windows/deployment-examples?view=msvc-170) — Ship `msvcp140.dll`, `vcruntime140.dll`, `vcruntime140_1.dll`.
+
+---
+
+## Dart CLI & Standalone Executables
+
+Turn Dart scripts into real Windows binaries — great for the tools that support your app.
+
+- [`dart compile`](https://dart.dev/tools/dart-compile) — `exe`, `aot-snapshot`, `kernel`, `jit-snapshot`.
+- [CLI distribution](https://dart.dev/tools/cli-distribution) — Ship a single self-contained binary.
+- [`dartaotruntime`](https://dart.dev/tools/dartaotruntime) — Rehost an AOT snapshot (not Windows-specific, but useful to know).
+
+| Tool | Description |
+| --- | --- |
+| [very_good_cli](https://pub.dev/packages/very_good_cli) | Scaffold production-quality Dart/Flutter CLIs and packages. |
+| [dcli](https://pub.dev/packages/dcli) | Shell-style DSL for Dart scripts — commands, arguments, progress. |
+| [mason_cli](https://pub.dev/packages/mason_cli) | Code generation and scaffolding via Dart bricks. |
+| [build_cli](https://pub.dev/packages/build_cli) | Turn argv into a typed CLI with minimal boilerplate. |
+| [args](https://pub.dev/packages/args) | The standard argument parser. |
+| [fiber_shell](https://pub.dev/packages/fiber_shell) | Typed shell-command builder for desktop tools. |
+| [dart_console](https://pub.dev/packages/dart_console) | Colorized, cursor-aware console output. |
+
+---
+
+## Testing & Debugging on Windows
+
+- [Flutter integration tests](https://docs.flutter.dev/testing/integration-tests) · [testing overview](https://docs.flutter.dev/testing/overview) · [integration-test cookbook](https://docs.flutter.dev/cookbook/testing/integration/introduction)
+- [test](https://pub.dev/packages/test) · [mocktail](https://pub.dev/packages/mocktail) — The Dart testing stack.
+
+**Sysinternals — see what your app actually does**
+
+- [Sysinternals Suite](https://learn.microsoft.com/en-us/sysinternals/downloads/) — The full toolkit.
+- [Process Monitor](https://learn.microsoft.com/en-us/sysinternals/downloads/procmon) — File, registry, and process operations in real time.
+- [Process Explorer](https://learn.microsoft.com/en-us/sysinternals/downloads/process-explorer) — Loaded modules, threads, handles.
+- [DebugView](https://learn.microsoft.com/en-us/sysinternals/downloads/debugview) — Capture `OutputDebugString` and `print` output.
+- [ProcDump](https://learn.microsoft.com/en-us/sysinternals/downloads/procdump) — Dump a hung or crashing process.
+- [TCPView](https://learn.microsoft.com/en-us/sysinternals/downloads/tcpview) — Every socket on the machine.
+
+**Profilers & debuggers**
+
+- [Windows Performance Toolkit](https://learn.microsoft.com/en-us/windows-hardware/test/wpt/) — [Recorder](https://learn.microsoft.com/en-us/windows-hardware/test/wpt/windows-performance-recorder) / [Analyzer](https://learn.microsoft.com/en-us/windows-hardware/test/wpt/windows-performance-analyzer).
+- [Event Tracing for Windows (ETW)](https://learn.microsoft.com/en-us/windows-hardware/test/wpt/event-tracing-for-windows) · [Win32 ETW portal](https://learn.microsoft.com/en-us/windows/win32/etw/event-tracing-portal)
+- [WinDbg / Debugging Tools](https://learn.microsoft.com/en-us/windows-hardware/drivers/debugger/) — Microsoft's native debugger.
+- [Windows Error Reporting](https://learn.microsoft.com/en-us/windows/win32/wer/windows-error-reporting) — How Windows reports crashes.
+- [`GetLastError`](https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-getlasterror) — The first thing to check when an FFI call fails.
 
 ---
 
